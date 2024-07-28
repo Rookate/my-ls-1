@@ -36,7 +36,7 @@ func ParseArgument(path string, opts Option, root bool) {
 					ParseArgument(entrypath, opts, false)
 				} else {
 					fileInfos = append(fileInfos, info)
-					fileInfos = HiddenFile(fileInfos, opts)
+					fileInfos = HiddenFile(fileInfos, opts, path)
 				}
 				DisplayContent(fileInfos, opts, path)
 			}
@@ -48,7 +48,7 @@ func ParseArgument(path string, opts Option, root bool) {
 				}
 				fileInfos = append(fileInfos, info)
 			}
-			fileInfos = HiddenFile(fileInfos, opts)
+			fileInfos = HiddenFile(fileInfos, opts, path)
 			DisplayContent(fileInfos, opts, path)
 		}
 	}

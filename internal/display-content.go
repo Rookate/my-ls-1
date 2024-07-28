@@ -9,6 +9,8 @@ func DisplayContent(fileInfos []fs.FileInfo, opts Option, path string) {
 
 	SortDisplay(fileInfos, opts)
 
+	SortTime(fileInfos, opts)
+
 	if opts.Long {
 		Long(fileInfos, opts)
 	} else if len(fileInfos) < 20 {
