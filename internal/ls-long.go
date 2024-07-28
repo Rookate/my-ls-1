@@ -11,6 +11,17 @@ import (
 
 // Fonction pour le flag -l pour afficher plus de détail
 func Long(fileInfos []fs.FileInfo, opts Option) {
+	totalBlock := 0
+	for _, blocksCount := range fileInfos {
+		stat, ok := blocksCount.Sys().(*syscall.Stat_t)
+		if !ok {
+			log.Fatal("Failed to get raw syscall.Stat_t data")
+		}
+		totalBlock += int(stat.Blocks)
+	}
+
+	fmt.Printf("total: %d\n", totalBlock/2)
+
 	for _, info := range fileInfos {
 		var link string
 		if info.Mode()&os.ModeSymlink != 0 { //condition pour savoir si le ficher est un lien symbolique
