@@ -16,7 +16,6 @@ type Option struct {
 	Path      string
 	Filenames []string
 	Root      bool
-	FileCount int
 }
 
 func ParseOptions(args []string) Option {
