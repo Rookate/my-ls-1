@@ -11,16 +11,18 @@ import (
 
 // Fonction pour le flag -l pour afficher plus de détail
 func Long(fileInfos []fs.FileInfo, opts Option) {
-	totalBlock := 0
-	for _, blocksCount := range fileInfos {
-		stat, ok := blocksCount.Sys().(*syscall.Stat_t)
-		if !ok {
-			log.Fatal("Failed to get raw syscall.Stat_t data")
+	if len(fileInfos) != 0 {
+		totalBlock := 0
+		for _, blocksCount := range fileInfos {
+			stat, ok := blocksCount.Sys().(*syscall.Stat_t)
+			if !ok {
+				log.Fatal("Failed to get raw syscall.Stat_t data")
+			}
+			totalBlock += int(stat.Blocks)
 		}
-		totalBlock += int(stat.Blocks)
-	}
 
-	fmt.Printf("total: %d\n", totalBlock/2)
+		fmt.Printf("total: %d\n", totalBlock/2)
+	}
 
 	for _, info := range fileInfos {
 		var link string
