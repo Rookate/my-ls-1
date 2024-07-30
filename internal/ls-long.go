@@ -39,7 +39,7 @@ func Long(fileInfos []fs.FileInfo, opts Option) {
 				}
 				if target == opts.Path {
 					target = "."
-				} else if target[:len(opts.Path)] == opts.Path {
+				} else if target[:len(opts.Path+"/")] == opts.Path+"/" {
 					target = target[len(opts.Path+"/"):]
 				}
 				link = " -> " + Colorize(target, linkInfo)
