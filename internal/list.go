@@ -25,14 +25,18 @@ func ParseArgument(path string, opts Option, root bool) {
 			for _, filenames := range opts.Filenames {
 				entrypath := filepath.Join(path, filenames)
 				info, err := os.Lstat(entrypath)
-				// os.Lstat pour ne pas suivre les fichiers cibles ce qui nous permet de savoir si un fichier est un lien symnolique ou non
+				// os.Lstat pour ne pas suivre les fichiers cibles ce qui nous permet de savoir si un fichier est un lien symbolique ou non
 				if err != nil {
 					fmt.Printf("Error %s does not exist or cannot be accessed\n", filenames)
 					continue
 				}
 
 				if info.IsDir() {
-					fmt.Printf("./%s:\n", filenames)
+					if opts.Recursive && opts.Root {
+						fmt.Println(".:")
+					} else {
+						fmt.Printf("./%s:\n", filenames)
+					}
 					ParseArgument(entrypath, opts, false)
 				} else {
 					fileInfos = append(fileInfos, info)
@@ -41,6 +45,10 @@ func ParseArgument(path string, opts Option, root bool) {
 				DisplayContent(fileInfos, opts, path)
 			}
 		} else {
+			if opts.Recursive && root {
+				fmt.Println(".:")
+			}
+
 			for _, entry := range entries {
 				info, err := entry.Info()
 				if err != nil {
