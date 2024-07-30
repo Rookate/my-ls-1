@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/user"
+	"path/filepath"
 	"syscall"
 )
 
@@ -26,16 +27,23 @@ func Long(fileInfos []fs.FileInfo, opts Option) {
 
 	for _, info := range fileInfos {
 		var link string
-		if info.Mode()&os.ModeSymlink != 0 { //condition pour savoir si le ficher est un lien symbolique
-			target, err := os.Readlink(info.Name())
+		if (info.Mode() & os.ModeSymlink) != 0 { //condition pour savoir si le ficher est un lien symbolique
+			target, err := filepath.EvalSymlinks(opts.Path + "/" + info.Name())
 			if err != nil {
 				fmt.Printf("Error resolving symlink: %v\n", err)
 				link = " -> <error>"
 			} else {
-				link = " -> " + target
+				linkInfo, errLink := os.Lstat(target)
+				if errLink != nil {
+					fmt.Println("Error getting info: " + errLink.Error())
+				}
+				if target == opts.Path {
+					target = "."
+				} else if target[:len(opts.Path)] == opts.Path {
+					target = target[len(opts.Path+"/"):]
+				}
+				link = " -> " + Colorize(target, linkInfo)
 			}
-		} else {
-			link = ""
 		}
 		stat, ok := info.Sys().(*syscall.Stat_t)
 		if !ok {
