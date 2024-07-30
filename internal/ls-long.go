@@ -28,7 +28,7 @@ func Long(fileInfos []fs.FileInfo, opts Option) {
 	for _, info := range fileInfos {
 		var link string
 		if (info.Mode() & os.ModeSymlink) != 0 { // Le fichier est-il un lien symbolique ?
-			target, err := filepath.EvalSymlinks(opts.Path + "/" + info.Name())
+			target, err := filepath.EvalSymlinks(filepath.Join(opts.Path, info.Name()))
 			if err != nil {
 				fmt.Printf("Error resolving symlink: %v\n", err)
 				link = " -> <error>"
@@ -39,8 +39,10 @@ func Long(fileInfos []fs.FileInfo, opts Option) {
 				}
 				if target == opts.Path {
 					target = "."
-				} else if target[:len(opts.Path+"/")] == opts.Path+"/" {
-					target = target[len(opts.Path+"/"):]
+				} else if filepath.Dir(target) == opts.Path {
+					target = filepath.Base(target)
+				} else if target[:len(filepath.Dir(opts.Path))] == filepath.Dir(opts.Path) {
+					target = "../" + target[len(filepath.Dir(opts.Path)+"/"):]
 				}
 				link = " -> " + Colorize(target, linkInfo)
 			}
