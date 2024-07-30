@@ -37,14 +37,18 @@ func Long(fileInfos []fs.FileInfo, opts Option) {
 				if errLink != nil {
 					fmt.Println("Error getting info: " + errLink.Error())
 				}
-				if target == opts.Path {
+
+				normalizedTarget := filepath.Clean(target)
+				normalizedPath := filepath.Clean(opts.Path)
+
+				if normalizedPath == normalizedTarget {
 					target = "."
-				} else if filepath.Dir(target) == opts.Path {
-					target = filepath.Base(target)
-				} else if target[:len(filepath.Dir(opts.Path))] == filepath.Dir(opts.Path) {
-					target = "../" + target[len(filepath.Dir(opts.Path)+"/"):]
+				} else if filepath.Dir(normalizedTarget) == normalizedPath {
+					normalizedTarget = filepath.Base(normalizedTarget)
+				} else if target[:len(filepath.Dir(normalizedPath))] == filepath.Dir(normalizedPath) {
+					normalizedTarget = "../" + normalizedTarget[len(filepath.Dir(normalizedPath)+"/"):]
 				}
-				link = " -> " + Colorize(target, linkInfo)
+				link = " -> " + Colorize(normalizedTarget, linkInfo)
 			}
 		}
 		stat, ok := info.Sys().(*syscall.Stat_t)
