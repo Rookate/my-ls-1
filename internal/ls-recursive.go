@@ -8,7 +8,10 @@ import (
 
 func Recursive(fileInfos []fs.FileInfo, opts Option, path string) {
 	for _, info := range fileInfos {
-		// Condition pour éviter que la récursive s'applique sur les repos . et .. car sinon ça fait une boucle à l'infinie
+		// Les dossiers parent et actuel ne sont pas à traiter
+		if info.Name() == "." || info.Name() == ".." {
+			continue
+		}
 
 		if info.IsDir() {
 			fmt.Println()
