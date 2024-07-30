@@ -55,7 +55,7 @@ func Long(fileInfos []fs.FileInfo, opts Option) {
 			log.Fatal(err)
 		}
 		name := Colorize(info.Name(), info)
-		fmt.Printf("%10v %3d %8v %8v %5d %5v %s %s\n",
+		fmt.Printf("%10v %3d %8v %8v %5d %5v %s%s\n",
 			info.Mode(),
 			stat.Nlink,
 			usr.Name,
