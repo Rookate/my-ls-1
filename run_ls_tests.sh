@@ -44,14 +44,22 @@ run_and_compare() {
 # Run the tests one by one
 run_and_compare "-l" "Testing 'go run . ls -l' vs 'ls -l'"
 run_and_compare "" "Testing 'go run . ls' vs 'ls'"
+run_and_compare "-l main.go" "Testing 'go run . -l main.go' vs 'ls -l main.go'"
+run_and_compare "README.MD" "Testing 'go run . ls README.MD' vs 'ls README.MD'"
+run_and_compare "internal/" "Testing 'go run . internal/' vs ' ls internal/'"
 run_and_compare "-a" "Testing 'go run . ls -a' vs 'ls -a'"
 run_and_compare "-t" "Testing 'go run . ls -t' vs 'ls -t'"
 run_and_compare "-la" "Testing 'go run . ls -la' vs 'ls -la'"
 run_and_compare "-lt" "Testing 'go run . ls -lt' vs 'ls -lt'"
 run_and_compare "-lR internal/" "Testing 'go run . ls -lR internal/' vs 'ls -lR internal/'"
 run_and_compare "/usr/bin/" "Testing 'go run . ls /usr/bin/' vs 'ls /usr/bin/'"
+run_and_compare "-alRrt internal/" "Testing 'go run . ls -alRrt internal' vs 'ls -alRrt internal/'"
+run_and_compare "-lR internal///test/// internal/test/" "Testing 'go run . ls -lR internal///test///' vs 'ls -lR internal///test/// internal/test/'"
+run_and_compare "-la /dev" "Testing 'go run . -la /dev' vs 'ls -la /dev'"
+run_and_compare "-" "Testing 'go run . ls -' vs 'ls -'"
 run_and_compare "-l symlink_dir" "Testing 'go run . ls -l symlink_dir' vs 'ls -l symlink_dir'"
 run_and_compare "-l symlink_dir/" "Testing 'go run . ls -l symlink_dir/' vs 'ls -l symlink_dir/'"
+
 
 echo "All tests completed."
 
