@@ -29,7 +29,17 @@ const (
 func Colorize(name string, info os.FileInfo) string {
 	var color string
 	if info.IsDir() {
-		color = ColorBold + ColorFGBlue
+		if (info.Mode()&0002 == 0002) || (info.Mode()&os.ModeSticky != 0) {
+			if (info.Mode()&0002 == 0002) && (info.Mode()&os.ModeSticky != 0) {
+				color = ColorBGGreen + ColorFGBlack
+			} else if (info.Mode() & os.ModeSticky) != 0 {
+				color = ColorBGBlue + ColorFGWhite
+			} else {
+				color = ColorBGGreen + ColorFGBlue
+			}
+		} else {
+			color = ColorBold + ColorFGBlue
+		}
 	} else if strings.HasSuffix(name, ".tar") || strings.HasSuffix(name, ".gz") || strings.HasSuffix(name, ".zip") {
 		color = ColorBold + ColorFGRed
 	} else if (info.Mode() & os.ModeSetuid) != 0 {
@@ -38,6 +48,12 @@ func Colorize(name string, info os.FileInfo) string {
 		color = ColorFGBlack + ColorBGYellow
 	} else if (info.Mode() & os.ModeSymlink) != 0 {
 		color = ColorBold + ColorFGCyan
+	} else if (info.Mode() & os.ModeSocket) != 0 {
+		color = ColorBold + ColorFGMagenta
+	} else if (info.Mode() & os.ModeNamedPipe) != 0 {
+		color = ColorBGBlack + ColorFGYellow
+	} else if (info.Mode() & os.ModeDevice) != 0 {
+		color = ColorBold + ColorBGBlack + ColorFGYellow
 	} else if (info.Mode() & 0100) != 0 {
 		color = ColorBold + ColorFGGreen
 	}

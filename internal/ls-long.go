@@ -45,7 +45,7 @@ func Long(fileInfos []fs.FileInfo, opts Option) {
 					target = "."
 				} else if filepath.Dir(normalizedTarget) == normalizedPath {
 					normalizedTarget = filepath.Base(normalizedTarget)
-				} else if target[:len(filepath.Dir(normalizedPath))] == filepath.Dir(normalizedPath) {
+				} else if target[:len(filepath.Dir(normalizedPath))] == filepath.Dir(normalizedPath) && normalizedTarget[0] != '/' {
 					normalizedTarget = "../" + normalizedTarget[len(filepath.Dir(normalizedPath)+"/"):]
 				}
 				link = " -> " + Colorize(normalizedTarget, linkInfo)
@@ -69,8 +69,9 @@ func Long(fileInfos []fs.FileInfo, opts Option) {
 			log.Fatal(err)
 		}
 		name := Colorize(info.Name(), info)
-		fmt.Printf("%10v %3d %8v %8v %5d %5v %s%s\n",
-			info.Mode(),
+
+		fmt.Printf("%s %3d %8v %8v %5d %5v %s%s\n",
+			getInfoModes(info),
 			stat.Nlink,
 			usr.Name,
 			grp.Name,
@@ -80,4 +81,88 @@ func Long(fileInfos []fs.FileInfo, opts Option) {
 			link,
 		)
 	}
+}
+
+func getInfoModes(info fs.FileInfo) string {
+	modes := make([]rune, 10, 11)
+	for i := 0; i < len(modes); i++ {
+		modes[i] = '-'
+	}
+
+	if info.IsDir() {
+		modes[0] = 'd'
+	} else if (info.Mode() & os.ModeSymlink) != 0 {
+		modes[0] = 'l'
+	} else if (info.Mode() & os.ModeSocket) != 0 {
+		modes[0] = 's'
+	} else if (info.Mode() & os.ModeNamedPipe) != 0 {
+		modes[0] = 'p'
+	} else if (info.Mode() & os.ModeDevice) != 0 {
+		if (info.Mode() & os.ModeCharDevice) != 0 {
+			modes[0] = 'c'
+		} else {
+			modes[0] = 'b'
+		}
+	} else {
+		modes[0] = '-'
+	}
+
+	if (info.Mode() & os.ModeSetuid) != 0 {
+		modes[3] = 's'
+	}
+	if (info.Mode() & os.ModeSetgid) != 0 {
+		modes[6] = 's'
+	}
+
+	if (info.Mode() & os.ModeSticky) != 0 {
+		modes[9] = 't'
+	}
+
+	perms := int(info.Mode()) & 0777
+	//fmt.Printf("%o -> %o %o %o\n", perms, perms/64, (perms/8)%8, perms&7)
+
+	{
+		usr := perms / 64
+		if usr >= 4 {
+			modes[1] = 'r'
+			usr -= 4
+		}
+		if usr >= 2 {
+			modes[2] = 'w'
+			usr -= 2
+		}
+		if usr > 0 && (info.Mode()&os.ModeSetuid) == 0 {
+			modes[3] = 'x'
+		}
+	}
+	{
+		grp := (perms / 8) % 8
+		if grp >= 4 {
+			modes[4] = 'r'
+			grp -= 4
+		}
+		if grp >= 2 {
+			modes[5] = 'w'
+			grp -= 2
+		}
+		if grp > 0 && (info.Mode()&os.ModeSetgid) == 0 {
+			modes[6] = 'x'
+		}
+	}
+	{
+		oth := perms & 7
+		if oth >= 4 {
+			modes[7] = 'r'
+			oth -= 4
+		}
+		if oth >= 2 {
+			modes[8] = 'w'
+			oth -= 2
+		}
+		if oth > 0 && (info.Mode()&os.ModeSticky) == 0 {
+			modes[9] = 'x'
+		}
+	}
+
+	return string(modes)
 }
