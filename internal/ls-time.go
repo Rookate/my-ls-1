@@ -6,13 +6,19 @@ import (
 )
 
 func SortTime(fileInfos []fs.FileInfo, opts Option) {
-	if opts.Time && opts.Reverse {
-		sort.Slice(fileInfos, func(i int, j int) bool {
-			return fileInfos[i].ModTime().Before((fileInfos[j].ModTime()))
-		})
-	} else if opts.Time {
-		sort.Slice(fileInfos, func(i int, j int) bool {
-			return fileInfos[i].ModTime().After((fileInfos[j].ModTime()))
-		})
+	var sorter func(i int, j int) bool
+
+	if opts.Time {
+		if opts.Reverse {
+			sorter = func(i int, j int) bool {
+				return fileInfos[i].ModTime().Before((fileInfos[j].ModTime()))
+			}
+		} else {
+			sorter = func(i int, j int) bool {
+				return fileInfos[i].ModTime().After((fileInfos[j].ModTime()))
+			}
+		}
 	}
+
+	sort.Slice(fileInfos, sorter)
 }
