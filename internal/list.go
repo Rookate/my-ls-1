@@ -23,12 +23,29 @@ func ParseArgument(path string, opts Option, root bool) {
 		var fileInfos []fs.FileInfo
 		if len(opts.Filenames) > 0 && root {
 			for _, filenames := range opts.Filenames {
+				if filenames == "-" {
+					return
+				}
 				entrypath := filepath.Join(path, filenames)
 				info, err := os.Lstat(entrypath)
 				// os.Lstat pour ne pas suivre les fichiers cibles ce qui nous permet de savoir si un fichier est un lien symbolique ou non
 				if err != nil {
 					fmt.Printf("Error %s does not exist or cannot be accessed\n", filenames)
 					continue
+				}
+				if (info.Mode()&os.ModeSymlink) != 0 && filenames[len(filenames)-1] == '/' {
+					resolvedPath, err := filepath.EvalSymlinks(entrypath)
+					if err != nil {
+						fmt.Printf("Error resolving symlink: %s\n", err)
+						continue
+					}
+					entrypath = resolvedPath
+					filenames = filepath.Base(entrypath)
+					info, err = os.Stat(entrypath)
+					if err != nil {
+						fmt.Printf("Error getting info of resolved path: %s\n", err)
+						continue
+					}
 				}
 
 				if info.IsDir() {

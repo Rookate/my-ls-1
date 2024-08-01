@@ -50,6 +50,8 @@ run_and_compare "-la" "Testing 'go run . ls -la' vs 'ls -la'"
 run_and_compare "-lt" "Testing 'go run . ls -lt' vs 'ls -lt'"
 run_and_compare "-lR internal/" "Testing 'go run . ls -lR internal/' vs 'ls -lR internal/'"
 run_and_compare "/usr/bin/" "Testing 'go run . ls /usr/bin/' vs 'ls /usr/bin/'"
+run_and_compare "-l symlink_dir" "Testing 'go run . ls -l symlink_dir' vs 'ls -l symlink_dir'"
+run_and_compare "-l symlink_dir/" "Testing 'go run . ls -l symlink_dir/' vs 'ls -l symlink_dir/'"
 
 echo "All tests completed."
 

@@ -22,6 +22,9 @@ func SortDisplay(fileInfos []fs.FileInfo, opts Option) {
 
 // Fonction pour que tout ce qui n'est pas des caractères alphabétiques ne soit pas pris en compte.
 func CleanName(name string) string {
+	if name == "." || name == ".." {
+		return name
+	}
 	lowerCaseName := strings.ToLower(name)
 	re := regexp.MustCompile("[^a-zA-Z0-9]+")
 	return re.ReplaceAllString(lowerCaseName, "")
