@@ -7,7 +7,7 @@ import (
 
 // Fonction pui permet de retravailler l'affichage des fichiers pour les mettre en colonnes. Try avec "go run . ls /usr/bin"
 func PrintColumns(fileInfos []os.FileInfo) {
-	const numberColumns = 6
+	const numberColumns = 5
 
 	numFiles := len(fileInfos)
 	filePerColumns := (numFiles + numberColumns - 1) / numberColumns
@@ -20,7 +20,7 @@ func PrintColumns(fileInfos []os.FileInfo) {
 			columnWidth = nameLen
 		}
 	}
-	columnWidth += 5
+	columnWidth += 17
 
 	for i := 0; i < filePerColumns; i++ {
 		for j := i; j < numFiles; j += filePerColumns {

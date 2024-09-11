@@ -59,14 +59,16 @@ func Long(fileInfos []fs.FileInfo, opts Option) {
 		uid := fmt.Sprint(stat.Uid)
 		gid := fmt.Sprint(stat.Gid)
 
-		usr, err := user.LookupGroupId(uid)
+		usr, err := user.LookupId(uid)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Printf("Error looking up user: %v\n", err)
+			usr = &user.User{Name: "unknown"}
 		}
 
 		grp, err := user.LookupGroupId(gid)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Printf("Error looking up group: %v\n", err)
+			grp = &user.Group{Name: "unknown"}
 		}
 		name := Colorize(info.Name(), info)
 

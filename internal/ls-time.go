@@ -20,5 +20,8 @@ func SortTime(fileInfos []fs.FileInfo, opts Option) {
 		}
 	}
 
-	sort.Slice(fileInfos, sorter)
+	if sorter != nil {
+		sort.Slice(fileInfos, sorter)
+
+	}
 }
