@@ -22,7 +22,7 @@ func Long(fileInfos []fs.FileInfo, opts Option) {
 			totalBlock += int(stat.Blocks)
 		}
 
-		fmt.Printf("total: %d\n", totalBlock/2)
+		fmt.Printf("total: %d\n", totalBlock)
 	}
 
 	for _, info := range fileInfos {
